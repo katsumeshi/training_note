@@ -4,10 +4,15 @@ import '../data/data.dart';
 import './excersize_detail.dart';
 
 class MyStatefulWidget extends StatefulWidget {
-  final String muscle;
+  final String muscleGroup;
   final String query;
+  final Set<String> exercises;
 
-  MyStatefulWidget({Key key, this.muscle = "", this.query = ""})
+  MyStatefulWidget(
+      {Key key,
+      this.muscleGroup = "",
+      this.query = "",
+      this.exercises = const {}})
       : super(key: key);
 
   @override
@@ -15,12 +20,11 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  Set<String> selected = Set.of([]);
   @override
   Widget build(BuildContext context) {
     return ListView(
         children: peliculas
-            .where((f) => f["type"].contains(widget.muscle))
+            .where((f) => f["type"].contains(widget.muscleGroup))
             .where((f) => f["value"]
                 .toLowerCase()
                 .replaceAll(" ", "")
@@ -36,12 +40,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           );
         },
         trailing: Checkbox(
-          value: selected.contains(pelicula["id"]),
+          value: widget.exercises.contains(pelicula["id"]),
           onChanged: (bool value) {
-            setState(() {
-              var id = pelicula["id"];
-              value ? selected.add(id) : selected.remove(id);
-            });
+            var id = pelicula["id"];
+            Provider.of<_HogeChangeNotifier>(context, listen: false)
+                .updateExercises(id);
           },
         ),
       );
@@ -56,7 +59,7 @@ class SecondRoute extends StatelessWidget {
         value: _HogeChangeNotifier(),
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Second Route"),
+            title: Text("Exercises"),
             actions: [
               Consumer<_HogeChangeNotifier>(
                   builder: (_, _HogeChangeNotifier hoge, __) => IconButton(
@@ -65,8 +68,8 @@ class SecondRoute extends StatelessWidget {
                       onPressed: () {
                         showSearch(
                           context: context,
-                          delegate:
-                              CustomSearchDelegate(muscleGroup: hoge.muscle),
+                          delegate: CustomSearchDelegate(
+                              muscleGroup: hoge.muscleGroup),
                         );
                       })),
             ],
@@ -74,22 +77,43 @@ class SecondRoute extends StatelessWidget {
               preferredSize: const Size.fromHeight(20.0),
               child: Consumer<_HogeChangeNotifier>(
                   builder: (_, _HogeChangeNotifier hoge, __) =>
-                      MyHomePage2(hoge.muscle)),
+                      MyHomePage2(hoge.muscleGroup)),
             ),
           ),
-          body: Consumer<_HogeChangeNotifier>(
-              builder: (_, _HogeChangeNotifier hoge, __) =>
-                  MyStatefulWidget(muscle: hoge.muscle)),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SecondRoute()),
-              );
-            },
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          ),
+          body: SafeArea(
+              left: true,
+              top: true,
+              right: true,
+              bottom: true,
+              minimum: const EdgeInsets.all(16.0),
+              child: Consumer<_HogeChangeNotifier>(
+                  builder: (_, _HogeChangeNotifier hoge, __) =>
+                      MyStatefulWidget(muscleGroup: hoge.muscleGroup))),
+          bottomNavigationBar: BottomAppBar(
+              color: Colors.white,
+              child: Container(
+                margin: const EdgeInsets.only(left: 16, right: 16),
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ThirdRoute()),
+                    );
+                  },
+                  child: const Text('Add Exercises',
+                      style: TextStyle(fontSize: 16)),
+                ),
+              )),
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => SecondRoute()),
+          //     );
+          //   },
+          //   tooltip: 'Increment',
+          //   child: Icon(Icons.add),
+          // ),
         ));
   }
 }
@@ -147,19 +171,25 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return MyStatefulWidget(muscle: muscleGroup, query: query);
+    return MyStatefulWidget(muscleGroup: muscleGroup, query: query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return MyStatefulWidget(muscle: muscleGroup, query: query);
+    return MyStatefulWidget(muscleGroup: muscleGroup, query: query);
   }
 }
 
 class _HogeChangeNotifier extends ChangeNotifier {
-  String muscle = "";
+  String muscleGroup = "";
+  Set<String> exercises = {};
+  void updateExercises(String id) {
+    exercises.contains(id) ? exercises.remove(id) : exercises.add(id);
+    notifyListeners();
+  }
+
   void changeMuscle(String value) {
-    muscle = value;
+    muscleGroup = value;
     notifyListeners();
   }
 }
