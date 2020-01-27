@@ -5,8 +5,10 @@ import './excersize_detail.dart';
 
 class MyStatefulWidget extends StatefulWidget {
   final String muscle;
+  final String query;
 
-  MyStatefulWidget({Key key, this.muscle}) : super(key: key);
+  MyStatefulWidget({Key key, this.muscle = "", this.query = ""})
+      : super(key: key);
 
   @override
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
@@ -19,6 +21,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return ListView(
         children: peliculas
             .where((f) => f["type"].contains(widget.muscle))
+            .where((f) => f["value"]
+                .toLowerCase()
+                .replaceAll(" ", "")
+                .contains(widget.query))
             .map((pelicula) {
       return ListTile(
         title: Text(pelicula["value"]),
@@ -43,27 +49,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   }
 }
 
-var muscles = [
-  "",
-  "Chest",
-  "Forearms",
-  "Lats",
-  "Middle Back",
-  "Lower Back",
-  "Neck",
-  "Quadriceps",
-  "Hamstrings",
-  "Calves",
-  "Triceps",
-  "Traps",
-  "Shoulders",
-  "Abdominals",
-  "Glutes",
-  "Biceps",
-  "Adductors",
-  "Abductors",
-];
-
 class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -80,7 +65,8 @@ class SecondRoute extends StatelessWidget {
                       onPressed: () {
                         showSearch(
                           context: context,
-                          delegate: CustomSearchDelegate(),
+                          delegate:
+                              CustomSearchDelegate(muscleGroup: hoge.muscle),
                         );
                       })),
             ],
@@ -116,7 +102,7 @@ class MyHomePage2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
         value: selectedMuscle,
-        items: muscles.map((String value) {
+        items: muscleGroups.map((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),
@@ -131,7 +117,8 @@ class MyHomePage2 extends StatelessWidget {
 }
 
 class CustomSearchDelegate extends SearchDelegate {
-  String seleccion = '';
+  final String muscleGroup;
+  CustomSearchDelegate({this.muscleGroup});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -160,14 +147,12 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return MyStatefulWidget();
+    return MyStatefulWidget(muscle: muscleGroup, query: query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final a = Provider.of<_HogeChangeNotifier>(context, listen: false);
-    print(a);
-    return MyStatefulWidget();
+    return MyStatefulWidget(muscle: muscleGroup, query: query);
   }
 }
 
@@ -178,18 +163,3 @@ class _HogeChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-// class HogeWidget extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     // ここからChangeNotifierを下層に渡す
-//     return ChangeNotifierProvider<_HogeChangeNotifier>.value(
-//       value: _HogeChangeNotifier(),
-//       child: Column(
-//         children: <Widget>[
-//           SecondRoute(),
-//         ],
-//       ),
-//     );
-//   }
-// }

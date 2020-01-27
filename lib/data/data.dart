@@ -1,3 +1,24 @@
+const muscleGroups = [
+  "",
+  "Chest",
+  "Forearms",
+  "Lats",
+  "Middle Back",
+  "Lower Back",
+  "Neck",
+  "Quadriceps",
+  "Hamstrings",
+  "Calves",
+  "Triceps",
+  "Traps",
+  "Shoulders",
+  "Abdominals",
+  "Glutes",
+  "Biceps",
+  "Adductors",
+  "Abductors",
+];
+
 const peliculas = [
   {"id": "1", "value": "Rickshaw Carry", "type": "Forearms"},
   {"id": "2", "value": "One-Arm Medicine Ball Slam", "type": "Abdominals"},
