@@ -1,3 +1,57 @@
+import 'package:flutter/material.dart';
+
+class Volume {
+  const Volume({
+    @required this.weight,
+    @required this.reps,
+    @required this.notes,
+  })  : assert(weight != null),
+        assert(reps != null),
+        assert(notes != null);
+  final double weight;
+  final int reps;
+  final String notes;
+}
+
+class Program {
+  const Program({
+    @required this.id,
+    @required this.volumes,
+  })  : assert(id != null),
+        assert(volumes != null);
+  final String id;
+  final List<Volume> volumes;
+}
+
+class MyModel with ChangeNotifier {
+  String muscleGroup = "";
+  Map<String, Program> programs = {};
+  void updateExercises(String id) {
+    if (programs.containsKey(id)) {
+      programs.remove(id);
+    } else {
+      programs[id] = Program(id: id, volumes: []);
+    }
+    notifyListeners();
+  }
+
+  void removeExcersize(String id, int index) {
+    programs[id].volumes.removeAt(index);
+    notifyListeners();
+  }
+
+  void addExercises(String id) {
+    print(programs[id]);
+    programs[id].volumes.add(Volume(weight: 0, reps: 0, notes: ""));
+    notifyListeners();
+  }
+
+  void changeMuscle(String value) {
+    muscleGroup = value;
+    notifyListeners();
+  }
+}
+
 const muscleGroups = [
   "",
   "Chest",

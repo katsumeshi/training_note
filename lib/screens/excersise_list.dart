@@ -31,23 +31,24 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 .contains(widget.query))
             .map((pelicula) {
       return ListTile(
-        title: Text(pelicula["value"]),
-        subtitle: Text(pelicula["type"]),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ThirdRoute()),
-          );
-        },
-        trailing: Checkbox(
-          value: widget.exercises.contains(pelicula["id"]),
-          onChanged: (bool value) {
-            var id = pelicula["id"];
-            Provider.of<_HogeChangeNotifier>(context, listen: false)
-                .updateExercises(id);
+          title: Text(pelicula["value"]),
+          subtitle: Text(pelicula["type"]),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ThirdRoute()),
+            );
           },
-        ),
-      );
+          trailing: Consumer<MyModel>(
+            builder: (_, hoge, __) => Checkbox(
+              value: hoge.programs.containsKey(pelicula["id"]),
+              onChanged: (bool value) {
+                var id = pelicula["id"];
+                Provider.of<MyModel>(context, listen: false)
+                    .updateExercises(id);
+              },
+            ),
+          ));
     }).toList());
   }
 }
@@ -104,16 +105,6 @@ class SecondRoute extends StatelessWidget {
                       style: TextStyle(fontSize: 16)),
                 ),
               )),
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => SecondRoute()),
-          //     );
-          //   },
-          //   tooltip: 'Increment',
-          //   child: Icon(Icons.add),
-          // ),
         ));
   }
 }
@@ -185,8 +176,11 @@ class _HogeChangeNotifier extends ChangeNotifier {
   Set<String> exercises = {};
   void updateExercises(String id) {
     exercises.contains(id) ? exercises.remove(id) : exercises.add(id);
+    print(exercises);
     notifyListeners();
   }
+
+  void removeExcersize(String id) {}
 
   void changeMuscle(String value) {
     muscleGroup = value;
