@@ -7,18 +7,8 @@ class ThirdRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Third Route"),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                tooltip: 'Search',
-                onPressed: () {
-                  // showSearch(
-                  //   context: context,
-                  //   delegate: CustomSearchDelegate(),
-                  // );
-                }),
-          ],
+          title: Text("Programs"),
+          actions: [],
         ),
         body: Consumer<MyModel>(builder: (_, model, _s) {
           final l = model.programs.keys.toList();
@@ -32,14 +22,25 @@ class ThirdRoute extends StatelessWidget {
                 final b = program.volumes
                     .asMap()
                     .map((i, volume) => MapEntry(
-                          i,
-                          Dismissible(
-                              key: UniqueKey(),
-                              onDismissed: (direction) {
-                                Provider.of<MyModel>(context, listen: false)
-                                    .removeExcersize(id, i);
-                              },
-                              background: Container(color: Colors.red),
+                        i,
+                        Dismissible(
+                          key: UniqueKey(),
+                          onDismissed: (direction) {
+                            Provider.of<MyModel>(context, listen: false)
+                                .removeExcersize(id, i);
+                          },
+                          background: new Container(
+                              padding: EdgeInsets.only(right: 20.0),
+                              color: Colors.red,
+                              child: new Align(
+                                alignment: Alignment.centerRight,
+                                child: new Text('Delete',
+                                    textAlign: TextAlign.right,
+                                    style: new TextStyle(color: Colors.white)),
+                              )),
+                          child: Container(
+                              margin:
+                                  const EdgeInsets.only(top: 8.0, bottom: 8.0),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -69,7 +70,7 @@ class ThirdRoute extends StatelessWidget {
                                   ])),
                                 ],
                               )),
-                        ))
+                        )))
                     .values
                     .toList();
                 final w = ExcersizeListItem(excersize);
@@ -89,22 +90,25 @@ class ExcersizeListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(excersize["value"]),
-      trailing: MaterialButton(
-        onPressed: () {
-          Provider.of<MyModel>(context, listen: false)
-              .addExercises(excersize["id"]);
-        },
-        color: Colors.blue,
-        textColor: Colors.white,
-        child: Icon(
-          Icons.add,
-          size: 24,
-        ),
-        shape: CircleBorder(),
-      ),
-    );
+    return Container(
+        // margin: const EdgeInsets.only(bottom: 16.0),
+        color: Colors.grey.shade300,
+        child: ListTile(
+          title: Text(excersize["value"]),
+          trailing: MaterialButton(
+            onPressed: () {
+              Provider.of<MyModel>(context, listen: false)
+                  .addExercises(excersize["id"]);
+            },
+            color: Colors.blue,
+            textColor: Colors.white,
+            child: Icon(
+              Icons.add,
+              size: 24,
+            ),
+            shape: CircleBorder(),
+          ),
+        ));
   }
 }
 
