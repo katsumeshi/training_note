@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './excersise_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -55,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          updateData();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SecondRoute()),
@@ -64,6 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+void updateData() {
+  final databaseReference = Firestore.instance;
+  try {
+    databaseReference
+        .collection('books')
+        .document('1')
+        .setData({'description': 'Head First Flutter'});
+  } catch (e) {
+    print(e.toString());
   }
 }
 

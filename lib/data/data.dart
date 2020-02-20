@@ -21,35 +21,56 @@ class Program {
         assert(volumes != null);
   final String id;
   final List<Volume> volumes;
+
+  String get title =>
+      peliculas.where((f) => f["id"].contains(id)).first["value"];
+
+  // Volume getById(int id) => Volume(id, volumes[id % _itemNames.length]);
+
+  // set volume(Volume volume) {
+  //   _volume
+  //   // assert(newCatalog != null);
+  //   // assert(_itemIds.every((id) => newCatalog.getById(id) != null),
+  //   //     'The catalog $newCatalog does not have one of $_itemIds in it.');
+  //   // _catalog = newCatalog;
+  //   // notifyListeners();
+  // }
 }
 
-class MyModel with ChangeNotifier {
-  String muscleGroup = "";
-  Map<String, Program> programs = {};
-  void updateExercises(String id) {
-    if (programs.containsKey(id)) {
-      programs.remove(id);
-    } else {
-      programs[id] = Program(id: id, volumes: []);
-    }
+class ProgramModel with ChangeNotifier {
+  final List<Program> _programs = [];
+
+  List<Program> get programs => _programs;
+
+  bool hasProgram(String key) => _programs.asMap().containsKey(key);
+
+  // .map((id) => _catalog.getById(id)).toList();
+
+  // void updateExercises(String id) {
+  //   if (programs.containsKey(id)) {
+  //     programs.remove(id);
+  //   } else {
+  //     programs[id] = Program(id: id, volumes: []);
+  //   }
+  //   notifyListeners();
+  // }
+
+  // void removeExcersize(String id, int index) {
+  //   programs[id].volumes.removeAt(index);
+  //   notifyListeners();
+  // }
+
+  void add(String id) {
+    // print(programs[id]);
+    // programs[id].volumes.add(Volume(weight: 0, reps: 0, notes: ""));
+    _programs.add(Program(id: id, volumes: []));
     notifyListeners();
   }
 
-  void removeExcersize(String id, int index) {
-    programs[id].volumes.removeAt(index);
-    notifyListeners();
-  }
-
-  void addExercises(String id) {
-    print(programs[id]);
-    programs[id].volumes.add(Volume(weight: 0, reps: 0, notes: ""));
-    notifyListeners();
-  }
-
-  void changeMuscle(String value) {
-    muscleGroup = value;
-    notifyListeners();
-  }
+  // void changeMuscle(String value) {
+  //   muscleGroup = value;
+  //   notifyListeners();
+  // }
 }
 
 const muscleGroups = [
@@ -73,7 +94,7 @@ const muscleGroups = [
   "Abductors",
 ];
 
-const peliculas = [
+const List<Map<String, String>> peliculas = [
   {"id": "1", "value": "Rickshaw Carry", "type": "Forearms"},
   {"id": "2", "value": "One-Arm Medicine Ball Slam", "type": "Abdominals"},
   {"id": "3", "value": "Weighted Pull Ups", "type": "Lats"},

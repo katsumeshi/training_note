@@ -22,6 +22,7 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<ProgramModel>(context);
     return ListView(
         children: peliculas
             .where((f) => f["type"].contains(widget.muscleGroup))
@@ -29,27 +30,23 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 .toLowerCase()
                 .replaceAll(" ", "")
                 .contains(widget.query))
-            .map((pelicula) {
-      return ListTile(
-          title: Text(pelicula["value"]),
-          subtitle: Text(pelicula["type"]),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ThirdRoute()),
-            );
-          },
-          trailing: Consumer<MyModel>(
-            builder: (_, hoge, __) => Checkbox(
-              value: hoge.programs.containsKey(pelicula["id"]),
-              onChanged: (bool value) {
-                var id = pelicula["id"];
-                Provider.of<MyModel>(context, listen: false)
-                    .updateExercises(id);
-              },
-            ),
-          ));
-    }).toList());
+            .map((pelicula) => ListTile(
+                title: Text(pelicula["value"]),
+                subtitle: Text(pelicula["type"]),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProgramsRoute()),
+                  );
+                },
+                trailing: Checkbox(
+                    value: model.hasProgram(pelicula["id"]),
+                    onChanged: (bool value) {
+                      // var id = pelicula["id"];
+                      // Provider.of<ProgramModel>(context, listen: false)
+                      //     .updateExercises(id);
+                    })))
+            .toList());
   }
 }
 
@@ -98,7 +95,7 @@ class SecondRoute extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ThirdRoute()),
+                      MaterialPageRoute(builder: (context) => ProgramsRoute()),
                     );
                   },
                   child: const Text('Add Exercises',
